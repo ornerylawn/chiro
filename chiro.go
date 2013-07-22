@@ -54,9 +54,9 @@ func PrintUsage() {
 
   command:
 
-  init - create a new requirejs/backbone/jquery/sass app
+  init - create a new app
 
-  add <subcommand> <args>
+  add <subcommand>
 
     subcommand:
 
@@ -64,7 +64,7 @@ func PrintUsage() {
     model <model name> - create a new model with the given name
     font <font string> - add a font from Google Web Fonts
 
-  remove <subcommand> <args>
+  remove <subcommand>
 
     subcommand:
 
@@ -78,7 +78,7 @@ func PrintUsage() {
 // InitProject downloads the files from github.com/ryanlbrown/spapp
 // into the current directory.
 func InitProject() {
-	fmt.Println("Downloading template...")
+	fmt.Println("\nDownloading template...")
 	resp, err := http.Get("https://github.com/ryanlbrown/spapp/archive/master.zip")
 	if err != nil {
 		panic(err)
@@ -127,27 +127,33 @@ func InitProject() {
 			fmt.Println("Created:", subName)
 		}
 	}
+	fmt.Println()
 }
 
 // AddView creates a new backbone view flie, a new sass file, a new
 // template file, and adds a link tag to index.html.
 func AddView(name string) {
+	fmt.Println()
 	viewName := ViewName(name)
 	contents := fmt.Sprintf(viewTemplate, TemplateFilename(name), viewName, ClassName(name), viewName)
 	WriteFile(ViewFilename(name), contents, false);
 	WriteFile(SassFilename(name), "", false);
 	WriteFile(TemplateFilename(name), "", false);
 	AddLinkTag(name);
+	fmt.Println()
 }
 
 // AddMovel creates a new backbone model file.
 func AddModel(name string) {
+	fmt.Println()
 	modelName := ModelName(name)
 	contents := fmt.Sprintf(modelTemplate, modelName, modelName)
 	WriteFile(ModelFilename(name), contents, false);
+	fmt.Println()
 }
 
 func AddFont(name string) {
+	fmt.Println()
 	fontTag := FontTag(name)
 	in := ReadLines("index.html")
 	out := make([]string, 0)
@@ -158,24 +164,30 @@ func AddFont(name string) {
 		}
 	}
 	WriteFile("index.html", strings.Join(out, "\n") + "\n", true)
+	fmt.Println()
 }
 
 // RemoveView removes a backbone view file, its sass file, its
 // template file, and the link tag in index.html.
 func RemoveView(name string) {
+	fmt.Println()
 	RemoveFile(ViewFilename(name))
 	RemoveFile(SassFilename(name))
 	RemoveFile(TemplateFilename(name))
 	RemoveFile(CssFilename(name))
 	RemoveLinkTag(name)
+	fmt.Println()
 }
 
 // RemoveModel removes a backbone model file.
 func RemoveModel(name string) {
+	fmt.Println()
 	RemoveFile(ModelFilename(name))
+	fmt.Println()
 }
 
 func RemoveFont(name string) {
+	fmt.Println()
 	fontTag := FontTag(name)
 	in := ReadLines("index.html")
 	out := make([]string, 0)
@@ -186,6 +198,7 @@ func RemoveFont(name string) {
 		out = append(out, line)
 	}
 	WriteFile("index.html", strings.Join(out, "\n") + "\n", true)
+	fmt.Println()
 }
 
 func AddLinkTag(name string) {
