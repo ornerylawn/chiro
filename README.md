@@ -1,7 +1,5 @@
 # chiro
 
-As in... chiropractor. As in... it helps you with your Backbone.
-
 Install chiro:
 
 ```
