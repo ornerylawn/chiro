@@ -3,7 +3,7 @@
 Install chiro:
 
 ```
-$ go install github.com/ryanlbrown/chiro
+$ go get github.com/ryanlbrown/chiro
 ```
 
 ## What can I do with chiro?
