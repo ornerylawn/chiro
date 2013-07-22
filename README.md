@@ -196,21 +196,8 @@ define([
 });
 ```
 
-It just renders its template inside of a `div`. If we wanted to add
-a `TodoList` view to the main view, we can first create it with `chiro`:
-
-```
-$ chiro add view TodoList
-
-Created: js/todo_list_view.js
-Created: sass/todo_list.sass
-Created: tmpl/todo_list.html
-Modified: index.html
-
-
-```
-
-Now we can tell `require.js` that our `main` view depends on it, and we can start using it:
+It just renders its template inside of a `div`. Assuming you've already
+run `chiro add view TodoList` you can add it the `main` view like so:
 
 ```
 define([
@@ -246,8 +233,11 @@ define([
 But we'll also need to make a place for it in the template (`tmpl/main.html`):
 
 ```
-<h1>spapp</h1>
+<h1>Todo List</h1>
 <div class="content">
   <div class="list-container"></div>
 </div>
 ```
+
+The templates are underscore templates. The configuration for
+it is in `js/base_view.js`, which is a good place to add any common view code.
