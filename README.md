@@ -241,3 +241,8 @@ But we'll also need to make a place for it in the template (`tmpl/main.html`):
 
 The templates are underscore templates. The configuration for
 it is in `js/base_view.js`, which is a good place to add any common view code.
+
+## Todo
+
+* Add a router
+* Add a `build` command that will prepare the app for release
