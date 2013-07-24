@@ -1,12 +1,12 @@
 # chiro
 
-Install chiro:
+Install `chiro`:
 
 ```
 $ go get github.com/ryanlbrown/chiro
 ```
 
-## What can I do with chiro?
+## What can I do with `chiro`?
 
 Create a single-page app (complete with backbone, underscore, jquery, requirejs, and sass):
 
@@ -14,104 +14,101 @@ Create a single-page app (complete with backbone, underscore, jquery, requirejs,
 $ mkdir todolist
 $ cd todolist
 $ chiro init
-
-Downloading template...
-Created: css
-Created: css/reset.css
-Created: index.html
-Created: js
-Created: js/backbone.js
-Created: js/base_model.js
-Created: js/base_view.js
-Created: js/jquery.js
-Created: js/main.js
-Created: js/main_view.js
-Created: js/require.js
-Created: js/text.js
-Created: js/underscore.js
-Created: sass
-Created: sass/main.sass
-Created: tmpl
-Created: tmpl/main.html
-
 ```
 
 Add models and views:
 
 ```
 $ chiro add model Todo
-
-Created: js/todo_model.js
-
 $ chiro add view Todo
-
-Created: js/todo_view.js
-Created: sass/todo.sass
-Created: tmpl/todo.html
-Modified: index.html
-
 $ chiro add view TodoList
-
-Created: js/todo_list_view.js
-Created: sass/todo_list.sass
-Created: tmpl/todo_list.html
-Modified: index.html
-
 ```
 
 Add fonts from Google Web Fonts:
 
 ```
 $ chiro add font Lato
-
-Modified: index.html
-
 ```
 
-There are commands for removing things too:
-
-```
-$ chiro
-
- Usage: chiro <command>
-
-  command:
-
-  init - create a new app
-
-  add <subcommand>
-
-    subcommand:
-
-    view <view name> - create a new view with the given name
-    model <model name> - create a new model with the given name
-    font <font string> - add a font from Google Web Fonts
-
-  remove <subcommand>
-
-    subcommand:
-
-    view <view name> - remove the view with the given name
-    model <model name> - remove the model with the given name
-    font <font string> - remove a font
-
-```
+And you can remove all of those things too.
 
 ## Structure
 
-Let's start with CSS. Don't write CSS. Write Sass bro! This command
-will take all of your Sass in `sass/` and write your CSS in `css/`.
+The structure is very simple. There's an `index.html` and there are folders that contain exactly what they say:
+
+* __js__ - javascript files
+* __tmpl__ - underscore templates
+* __sass__ - sass styles
+* __css__ - css files generated from the sass files (and reset.css)
+
+When you add a model, say Todo, `chiro` creates `js/todo_model.js`. It looks like this:
+
+```
+define([
+
+  'underscore', 'base_model',
+
+], function(_, BaseModel) {
+
+  'use strict';
+
+  var TodoModel = BaseModel.extend({
+
+    defaults: {
+
+    },
+    
+    initialize: function(options) {
+    
+    },
+
+  });
+
+  return TodoModel;
+
+});
+```
+
+When you add a view, say Todo, `chiro` creates `sass/todo.js` and `tmpl/todo.js`, which are both empty, and `js/todo_view.js`. It looks like this:
+
+```
+define([
+
+  'jquery', 'underscore', 'base_view', 'text!tmpl/todo.html',
+
+], function($, _, BaseView, tmplText) {
+
+  'use strict';
+
+  var TodoView = BaseView.extend({
+
+    tmpl: _.template(tmplText),
+    tagName: 'div',
+    className: 'todo',
+
+    initialize: function(options) {
+
+    },
+
+    render: function() {
+      this.$el.html(this.tmpl());
+      return this;
+    },
+
+  });
+
+  return TodoView;
+
+});
+```
+
+`chiro` also adds a link tag in `index.html` that points to `css/todo.css`, which will be created automatically for you if you run this command:
 
 ```
 $ sass --watch sass:css
 ```
 
-These CSS files need to be included in `index.html` (apparently it is
-too difficult for `require.js` to manage CSS correctly for all
-browsers). `chiro` automatically does this when it creates the
-Sass file for your view.
-
-Let me just show you what `index.html` looks like after adding a `Todo` view:
+You'll end up with an `index.html` that looks like this:
 
 ```
 <!doctype html>
@@ -130,26 +127,17 @@ Let me just show you what `index.html` looks like after adding a `Todo` view:
 </html>
 ```
 
-As you can see, CSS (including fonts) is the only thing that
-is managed in `index.html`. Everything else
+As you can see, CSS is managed in `index.html`. Everything else
 is brought in by `require.js`, starting with `js/main.js`.
 
-`js/main.js` looks like this:
+`js/main.js` just tells `require.js` where the `tmpl` directory
+is (so that the views can refer to it) and then renders the main
+view. It adds the main view to the DOM once the `document` is `ready`.
 
 ```
-require.config({
+require.config({ paths: {'tmpl': '../tmpl'} });
 
-  paths: {
-    'tmpl': '../tmpl',
-  },
-
-});
-
-require([
-
-  'jquery', 'main_view',
-
-], function($, MainView) {
+require(['jquery', 'main_view'], function($, MainView) {
 
   'use strict';
 
@@ -163,39 +151,17 @@ require([
 });
 ```
 
-The `main` view is rendered right away, and appended to `body` when `document` is ready.
-
-`js/main_view.js` looks like this:
+Let's say you've just created a new view, TodoList, and you want to add it to the main view.
+All you need to do is create a spot for it in the main view's template (`tmpl/main.html`):
 
 ```
-define([
-
-  'jquery', 'underscore', 'base_view', 'text!tmpl/main.html',
-
-], function($, _, BaseView, tmplText) {
-
-  'use strict';
-
-  var MainView = BaseView.extend({
-
-    tmpl: _.template(tmplText),
-    tagName: 'div',
-    className: 'main',
-
-    render: function() {
-      this.$el.html(this.tmpl())
-      return this;
-    },
-
-  });
-
-  return MainView;
-
-});
+<h1>Todo List</h1>
+<div class="content">
+  <div class="list-container"></div>
+</div>
 ```
 
-It just renders its template inside of a `div`. Assuming you've already
-run `chiro add view TodoList` you can add it the `main` view like so:
+And then make sure that the main view renders a `TodoListView` into the element:
 
 ```
 define([
@@ -228,19 +194,8 @@ define([
 });
 ```
 
-But we'll also need to make a place for it in the template (`tmpl/main.html`):
-
-```
-<h1>Todo List</h1>
-<div class="content">
-  <div class="list-container"></div>
-</div>
-```
-
-The templates are underscore templates. The configuration for
-it is in `js/base_view.js`, which is a good place to add any common view code.
-
 ## Todo
 
-* Add a router
-* Add a `build` command that will prepare the app for release
+* Add a router.
+* Add a `build` command that will prepare the app for release.
+* Allow `init`ing from a custom template.
